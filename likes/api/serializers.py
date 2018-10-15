@@ -8,8 +8,7 @@ from rest_framework import serializers
 
 from ..models import Like
 from ..settings import LIKES_MODELS
-from ..signals import object_liked, object_unliked
-from ..utils import allowed_content_type
+from ..utils import allowed_content_type, send_signals
 
 __all__ = (
     'LikedObjectRelatedField',
@@ -81,18 +80,12 @@ class LikeToggleSerializer(serializers.ModelSerializer):
             validated_data['content_type'],
             validated_data['object'].pk
         )
-        if created:
-            object_liked.send(
-                sender=Like,
-                like=like,
-                request=self.context['request']
-            )
-        else:
-            object_unliked.send(
-                sender=Like,
-                object=validated_data['object'],
-                request=self.context['request']
-            )
+        send_signals(
+            created=created,
+            request=self.context['request'],
+            like=like,
+            obj=validated_data['object']
+        )
         return like
 
 

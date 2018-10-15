@@ -11,22 +11,11 @@ if apps.is_installed('django_jinja'):
     from ..utils import get_who_liked as who_liked, obj_likes_count, is_liked
 
     __all__ = (
-        'get_who_liked',
         'get_likes_count',
+        'get_who_liked',
         'get_likes',
         'get_is_liked'
     )
-
-    @library.global_function
-    def get_who_liked(obj) -> QuerySet:
-        """
-        Returns users, who liked a given object.
-
-        Usage:
-            {{ get_who_liked(object) }}
-        """
-        return who_liked(obj)
-
 
     @library.global_function
     def get_likes_count(obj) -> int:
@@ -37,6 +26,17 @@ if apps.is_installed('django_jinja'):
             {{ get_likes_count(object) }}
         """
         return obj_likes_count(obj)
+
+
+    @library.global_function
+    def get_who_liked(obj) -> QuerySet:
+        """
+        Returns users, who liked a given object.
+
+        Usage:
+            {{ get_who_liked(object) }}
+        """
+        return who_liked(obj)
 
     @library.global_function
     def get_likes(user) -> QuerySet:

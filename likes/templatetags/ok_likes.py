@@ -7,22 +7,11 @@ from ..utils import get_who_liked, obj_likes_count, is_liked as is_liked_util
 register = Library()
 
 __all__ = (
-    'who_liked',
     'likes_count',
+    'who_liked',
     'likes',
     'is_liked'
 )
-
-
-@register.simple_tag
-def who_liked(obj) -> QuerySet:
-    """
-    Returns users, who liked a given object.
-
-    Usage:
-        {% who_liked object as fans %}
-    """
-    return get_who_liked(obj)
 
 
 @register.simple_tag
@@ -39,6 +28,17 @@ def likes_count(obj) -> int:
         {{ obj|likes_count }}
     """
     return obj_likes_count(obj)
+
+
+@register.simple_tag
+def who_liked(obj) -> QuerySet:
+    """
+    Returns users, who liked a given object.
+
+    Usage:
+        {% who_liked object as fans %}
+    """
+    return get_who_liked(obj)
 
 
 @register.simple_tag

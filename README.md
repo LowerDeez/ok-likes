@@ -6,7 +6,7 @@
 
 Install with pip:
 
-```python
+```shell
 $ pip install django-ok-likes
 ```
 
@@ -22,7 +22,7 @@ INSTALLED_APPS = [
 ```
 
 Make migrations
-```python
+```shell
 $ python manage.py migrate
 ```
 
@@ -68,8 +68,8 @@ LIKE_MODELS = {
 Possible payload:
 ```json
 {
-    "content_type": 1,  // content type id of object
-    "ids": [1,2,3]  // list of objects primary keys
+    "content_type": 1,
+    "ids": [1,2,3]
 }
 ```
 Possible result:
@@ -82,14 +82,14 @@ Possible result:
 Possible payload:
 ```json
 {
-    "content_type": 1,  // content type id of object
-    "id": 1  // object's primary key
+    "content_type": 1,
+    "id": 1
 }
 ```
 Possible result:
 ```json
 {
-    "is_liked": true  // false
+    "is_liked": true
 }
 ```
 ### Mixin
@@ -106,3 +106,65 @@ Possible result:
     "is_liked": true
 }
 ```
+
+### Filters
+#### likes_count
+Returns a count of likes for a given object:
+```django
+    {{ object|likes_count }}
+```
+### Template Tags
+#### who_liked
+Returns a queryset of users, who liked a given object:
+```django
+    {% who_liked object as fans %}
+
+    {% for user in fans %}
+        <div class="like">{{ user.get_full_name }} likes {{ object }}</div>
+    {% endfor %}
+```
+#### likes
+Returns a queryset of likes for a given user:
+```django
+    {% likes request.user as user_likes %}
+    {% for like in user_likes %}
+        <div>{{ like }}</div>
+    {% endfor %}
+```
+#### is_liked
+Returns a bool value, which says is a given object liked by a given user:
+```django
+    {% is_liked object request.user as liked %}
+```
+
+### Jinja global functions
+#### get_likes_count
+The same as the `likes_count` filter.
+Usage:
+```django
+    {{ get_likes_count(object) }}
+```
+#### get_who_liked
+The same as the `who_liked` tag.
+Usage:
+```django
+    {{ get_who_liked(object) }}
+```
+#### get_likes
+The same as the `likes` tag.
+Usage:
+```django
+    {{ get_likes(request.user) }}
+```
+#### get_is_liked
+The same as the `is_liked` tag.
+Usage:
+```django
+    {{ get_is_liked(object, request.user) }}
+```
+### Signals
+#### likes.signals.object_liked
+A signal, which sents immediately after the object was liked and provides the single kwarg of created `Like` instance.
+
+#### likes.signals.object_unliked
+A signal, which sents immediately after the object was unliked and provides the single kwarg of an object.

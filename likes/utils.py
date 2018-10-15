@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from .models import Like
 from .settings import LIKES_MODELS
+from .signals import object_liked, object_unliked
 
 __all__ = (
     'allowed_content_type',
@@ -11,7 +12,8 @@ __all__ = (
     'obj_likes_count',
     'is_liked',
     'get_who_liked',
-    'admin_change_url'
+    'admin_change_url',
+    'send_signals'
 )
 
 User = get_user_model()
@@ -97,3 +99,18 @@ def admin_change_url(obj) -> str:
         f'admin:{app_label}_{model_name}_change',
         args=(obj.pk,)
     )
+
+
+def send_signals(created, request, like, obj):
+    if created:
+        object_liked.send(
+            sender=Like,
+            like=like,
+            request=request
+        )
+    else:
+        object_unliked.send(
+            sender=Like,
+            object=obj,
+            request=request
+        )

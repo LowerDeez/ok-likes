@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.serializers import ModelSerializer
 
 from ..models import Like
-from ..utils import get_who_liked
+from ..utils import get_who_liked, send_signals
 
 __all__ = (
     'LikedMixin',
@@ -34,6 +34,12 @@ class LikedMixin:
         obj = self.get_object()
         ct = ContentType.objects.get_for_model(obj)
         like, created = Like.like(sender=request.user, content_type=ct, object_id=obj.pk)
+        send_signals(
+            created=created,
+            request=request,
+            like=like,
+            obj=obj
+        )
         return Response({'id': obj.pk, 'content_type': ct.pk, 'is_liked': created})
 
     @action(detail=True, methods=['GET'])
