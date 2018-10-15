@@ -102,6 +102,9 @@ def admin_change_url(obj) -> str:
 
 
 def send_signals(created, request, like, obj):
+	"""
+	Sends signals when object was liked and unliked.
+	"""
     if created:
         object_liked.send(
             sender=Like,
