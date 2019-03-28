@@ -47,6 +47,12 @@ LIKES_MODELS = {
 }
 ```
 
+You can set any pagination class for ListAPIView:
+
+```python
+LIKES_REST_PAGINATION_CLASS = 'core.api.pagination.MyResponsePagination'
+```
+
 ## Usage
 
 ## API

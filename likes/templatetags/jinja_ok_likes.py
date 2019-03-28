@@ -46,7 +46,7 @@ if apps.is_installed('django_jinja'):
         Usage:
             {{ get_likes(request.user) }}
         """
-        return Like.objects.filter(sender=user)
+        return Like.objects.filter(sender=user).distinct()
 
     @library.global_function
     def get_is_liked(obj, user) -> bool:

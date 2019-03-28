@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.serializers import ModelSerializer
 
 from ..models import Like
-from ..utils import get_who_liked, send_signals
+from ..utils import get_who_liked, send_signal
 
 __all__ = (
     'LikedMixin',
@@ -19,12 +19,14 @@ class LikedMixin:
     Mixin to add two routable actions to ModelViewSets,
     which allows to get "fans" for a current object and "like/unlike" it.
     """
-    user_serializer = None  # type: ModelSerializer
+    user_serializer_class: ModelSerializer = None
 
     def get_user_serializer(self):
-        if not self.user_serializer:
-            raise AttributeError(pgettext_lazy('like', '"user_serializer" is not specified.'))
-        return self.user_serializer
+        if not self.user_serializer_class:
+            raise AttributeError(
+                pgettext_lazy('like', '"user_serializer_class" is not specified.')
+            )
+        return self.user_serializer_class()
 
     @action(detail=True, methods=['POST'], permission_classes=[IsAuthenticated])
     def toggle(self, request, pk=None):
@@ -34,7 +36,7 @@ class LikedMixin:
         obj = self.get_object()
         ct = ContentType.objects.get_for_model(obj)
         like, created = Like.like(sender=request.user, content_type=ct, object_id=obj.pk)
-        send_signals(
+        send_signal(
             created=created,
             request=request,
             like=like,
@@ -50,5 +52,9 @@ class LikedMixin:
         obj = self.get_object()
         users = get_who_liked(obj)
         serializer_class = self.get_user_serializer()
-        serializer = serializer_class(users, context={'request': request}, many=True)
+        serializer = serializer_class(
+            instance=users,
+            context={'request': request},
+            many=True
+        )
         return Response(serializer.data)

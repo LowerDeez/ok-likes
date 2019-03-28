@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from .pagination import MetaResponsePagination
+from .pagination import get_pagination_class
 from .serializers import LikeSerializer, LikeToggleSerializer, IsLikedSerializer
 from ..models import Like
 from ..utils import user_likes_count
@@ -21,7 +21,7 @@ class LikeListAPIView(ListAPIView):
     """
     List API View to return all likes for authenticated user.
     """
-    pagination_class = MetaResponsePagination
+    pagination_class = get_pagination_class()
     permission_classes = (IsAuthenticated, )
     serializer_class = LikeSerializer
     queryset = Like.objects.all()
@@ -58,7 +58,11 @@ class LikeToggleView(CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         data = serializer.data
         data['is_liked'] = bool(serializer.instance.pk)
-        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            data=data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
 
 class UserCountOfLikesAPIView(APIView):
@@ -68,7 +72,9 @@ class UserCountOfLikesAPIView(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
-        return Response(data={'count': user_likes_count(request.user)})
+        return Response(
+            data={'count': user_likes_count(request.user)}
+        )
 
 
 class IsLikedAPIView(APIView):
@@ -84,7 +90,13 @@ class IsLikedAPIView(APIView):
     permission_classes = (IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
-        serializer = IsLikedSerializer(data=request.data, context={'request': request})
+        serializer = IsLikedSerializer(
+            data=request.data,
+            context={'request': request}
+        )
         if serializer.is_valid():
             return Response(serializer.data)
-        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            data={'errors': serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )

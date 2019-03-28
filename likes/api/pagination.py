@@ -1,22 +1,16 @@
-from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
+from django.utils.module_loading import import_string
+
+from likes.settings import LIKES_REST_PAGINATION_CLASS
 
 __all__ = (
-    'MetaResponsePagination',
+    'get_pagination_class',
 )
 
 
-class MetaResponsePagination(PageNumberPagination):
-    page_size = 12
-    page_size_query_param = 'page_size'
-    max_page_size = 1000
-
-    def get_paginated_response(self, data):
-        return Response({
-            'meta': {
-                'count': self.page.paginator.count,
-                'page': self.page.number,
-                'perPage': self.get_page_size(self.request)
-            },
-            'data': data
-        })
+def get_pagination_class():
+    pagination_class = LIKES_REST_PAGINATION_CLASS
+    if pagination_class:
+        try:
+            return import_string(pagination_class)
+        except ImportError:
+            pass

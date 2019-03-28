@@ -49,7 +49,7 @@ def likes(user) -> QuerySet:
     Usage:
         {% likes request.user as var %}
     """
-    return Like.objects.filter(sender=user)
+    return Like.objects.filter(sender=user).distinct()
 
 
 @register.simple_tag

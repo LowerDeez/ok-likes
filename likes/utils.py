@@ -13,7 +13,7 @@ __all__ = (
     'is_liked',
     'get_who_liked',
     'admin_change_url',
-    'send_signals'
+    'send_signal'
 )
 
 User = get_user_model()
@@ -101,7 +101,7 @@ def admin_change_url(obj) -> str:
     )
 
 
-def send_signals(created, request, like, obj):
+def send_signal(created, request, like, obj):
     """
     Sends signals when object was liked and unliked.
     """

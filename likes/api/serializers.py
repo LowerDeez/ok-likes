@@ -8,7 +8,7 @@ from rest_framework import serializers
 
 from ..models import Like
 from ..settings import LIKES_MODELS
-from ..utils import allowed_content_type, send_signals
+from ..utils import allowed_content_type, send_signal
 
 __all__ = (
     'LikedObjectRelatedField',
@@ -24,16 +24,21 @@ class LikedObjectRelatedField(serializers.RelatedField):
     """
 
     def to_representation(self, value):
-        models = {}
-        for item in LIKES_MODELS.items():
-            app_label, model_name = item[0].split('.')
-            serializer_class = item[1].get('serializer')
-            if all([app_label, model_name, serializer_class]):
-                models[apps.get_model(app_label, model_name)] = import_string(serializer_class)
-        for model in models.keys():
+        serializers = {}
+        for key, val in LIKES_MODELS.items():
+            app_label, model_name = key.split('.')
+            serializer_path = val.get('serializer')
+            if all([app_label, model_name, serializer_path]):
+                serializers[
+                    apps.get_model(app_label, model_name)
+                ] = import_string(serializer_path)
+        for model in serializers.keys():
             if isinstance(value, model):
-                return models[model](value, context=self.context).data
-        return value.pk
+                return serializers[model](
+                    instance=value,
+                    context=self.context
+                ).data
+        return str(value)
 
 
 class LikeSerializer(serializers.ModelSerializer):
@@ -61,7 +66,9 @@ class LikeToggleSerializer(serializers.ModelSerializer):
 
     def validate_content_type(self, value):
         if not allowed_content_type(value):
-            raise serializers.ValidationError(pgettext_lazy('like', 'Not allowed content type'))
+            raise serializers.ValidationError(
+                pgettext_lazy('like', 'Not allowed content type')
+            )
         return value
 
     def validate(self, data):
@@ -69,7 +76,9 @@ class LikeToggleSerializer(serializers.ModelSerializer):
         try:
             obj = content_type.get_object_for_this_type(pk=data['id'])
         except ObjectDoesNotExist:
-            raise serializers.ValidationError(pgettext_lazy('like', 'Object not found.'))
+            raise serializers.ValidationError(
+                pgettext_lazy('like', 'Object not found.')
+            )
         else:
             data['object'] = obj
         return data
@@ -80,7 +89,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
             validated_data['content_type'],
             validated_data['object'].pk
         )
-        send_signals(
+        send_signal(
             created=created,
             request=self.context['request'],
             like=like,
@@ -99,16 +108,16 @@ class IsLikedSerializer(serializers.Serializer):
 
     def validate(self, data):
         liked_ids = []
-        for _id in data['ids']:
+        for id_ in data['ids']:
             is_liked = (
                 Like.objects
                 .filter(
                     content_type=data['content_type'],
-                    object_id=_id,
+                    object_id=id_,
                     sender=self.context['request'].user
                 ).exists()
             )
             if is_liked:
-                liked_ids.append(_id)
+                liked_ids.append(id_)
         data['ids'] = liked_ids
         return data
