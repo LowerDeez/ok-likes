@@ -65,3 +65,5 @@ dist/
 django_ok_seo\.egg-info/
 
 \.tox/
+
+django_ok_likes\.egg-info/
