@@ -6,9 +6,10 @@ from django.utils.translation import pgettext_lazy
 
 from rest_framework import serializers
 
-from ..models import Like
-from ..settings import LIKES_MODELS
-from ..utils import allowed_content_type, send_signal
+from likes.models import Like
+from likes.settings import LIKES_MODELS
+from likes.utils import allowed_content_type
+from likes.services import send_signals
 
 __all__ = (
     'LikedObjectRelatedField',
@@ -89,7 +90,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
             validated_data['content_type'],
             validated_data['object'].pk
         )
-        send_signal(
+        send_signals(
             created=created,
             request=self.context['request'],
             like=like,

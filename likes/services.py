@@ -1,13 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.http import HttpRequest
 
 from likes.models import Like
+from likes.signals import object_liked, object_unliked
 
 __all__ = (
     'user_likes_count',
     'obj_likes_count',
     'is_liked',
-    'get_who_liked'
+    'get_who_liked',
+    'send_signals'
 )
 
 User = get_user_model()
@@ -74,3 +77,26 @@ def get_who_liked(obj):
             likes__object_id=obj.pk
         )
     )
+
+
+def send_signals(
+        created: bool,
+        request: HttpRequest,
+        like: Like,
+        obj
+):
+    """
+    Sends signals when object was liked and unliked.
+    """
+    if created:
+        object_liked.send(
+            sender=Like,
+            like=like,
+            request=request
+        )
+    else:
+        object_unliked.send(
+            sender=Like,
+            object=obj,
+            request=request
+        )

@@ -1,16 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.http.request import HttpRequest
 from django.urls import reverse
 
-from .models import Like
-from .settings import LIKES_MODELS
-from .signals import object_liked, object_unliked
+from likes.settings import LIKES_MODELS
 
 __all__ = (
     'allowed_content_type',
-    'admin_change_url',
-    'send_signals'
+    'admin_change_url'
 )
 
 User = get_user_model()
@@ -33,26 +29,3 @@ def admin_change_url(obj) -> str:
         f'admin:{app_label}_{model_name}_change',
         args=(obj.pk,)
     )
-
-
-def send_signals(
-        created: bool,
-        request: HttpRequest,
-        like: Like,
-        obj
-):
-    """
-    Sends signals when object was liked and unliked.
-    """
-    if created:
-        object_liked.send(
-            sender=Like,
-            like=like,
-            request=request
-        )
-    else:
-        object_unliked.send(
-            sender=Like,
-            object=obj,
-            request=request
-        )

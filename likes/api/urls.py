@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import (
+from likes.api.views import (
     LikeListAPIView,
     UserCountOfLikesAPIView,
     LikeToggleView,

@@ -5,9 +5,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from .pagination import get_pagination_class
-from .serializers import LikeSerializer, LikeToggleSerializer, IsLikedSerializer
-from ..models import Like
+from likes.api.pagination import get_pagination_class
+from likes.api.serializers import (
+    LikeSerializer,
+    LikeToggleSerializer,
+    IsLikedSerializer
+)
+from likes.models import Like
 from likes.services import user_likes_count
 
 __all__ = (

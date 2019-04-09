@@ -7,4 +7,8 @@ __all__ = (
 
 
 LIKES_MODELS = getattr(django_setting, 'LIKES_MODELS', {})
-LIKES_REST_PAGINATION_CLASS = getattr(django_setting, 'LIKES_REST_PAGINATION_CLASS', None)
+LIKES_REST_PAGINATION_CLASS = getattr(
+    django_setting,
+    'LIKES_REST_PAGINATION_CLASS',
+    None
+)

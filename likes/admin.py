@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.utils.html import mark_safe
 from django.utils.translation import pgettext_lazy
 
-from .models import Like
-from .utils import admin_change_url
+from likes.models import Like
+from likes.utils import admin_change_url
 
 __all__ = (
     'LikeAdmin',
