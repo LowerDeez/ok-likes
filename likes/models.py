@@ -25,7 +25,7 @@ class Like(models.Model):
         created_at (DateTimeField): when object was created
 
     Methods:
-        like (class method): implements the functionality of 'liking/unliking'
+        like (classmethod): implements 'toggle' functionality
     """
     sender = models.ForeignKey(
         User,
@@ -53,20 +53,24 @@ class Like(models.Model):
     class Meta:
         ordering = ['-created_at']
         unique_together = (
-            ("sender", "content_type", "object_id"),
+            (
+                "sender",
+                "content_type",
+                "object_id"
+            ),
         )
         verbose_name = pgettext_lazy('like', 'Like')
         verbose_name_plural = pgettext_lazy('like', 'Likes')
 
     def __str__(self) -> str:
-        return f"{self.sender} liked {self.content_object}"
+        return f"{self.sender} - {self.content_object}"
 
     @classmethod
     def like(
-        cls,
-        sender: User,
-        content_type:
-        ContentType, object_id: str
+            cls,
+            sender: User,
+            content_type: ContentType,
+            object_id: str
     ) -> Tuple[object, bool]:
         """
         Class method to like-dislike object

@@ -8,7 +8,11 @@ if apps.is_installed('django_jinja'):
     from django_jinja import library
 
     from ..models import Like
-    from ..utils import get_who_liked as who_liked, obj_likes_count, is_liked
+    from likes.services import (
+        obj_likes_count,
+        is_liked,
+        get_who_liked as who_liked
+    )
 
     __all__ = (
         'get_likes_count',
@@ -46,7 +50,7 @@ if apps.is_installed('django_jinja'):
         Usage:
             {{ get_likes(request.user) }}
         """
-        return Like.objects.filter(sender=user).distinct()
+        return Like.objects.filter(sender=user)
 
     @library.global_function
     def get_is_liked(obj, user) -> bool:

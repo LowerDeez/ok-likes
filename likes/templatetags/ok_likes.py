@@ -2,7 +2,11 @@ from django.db.models import QuerySet
 from django.template import Library
 
 from ..models import Like
-from ..utils import get_who_liked, obj_likes_count, is_liked as is_liked_util
+from likes.services import (
+    obj_likes_count,
+    is_liked as is_liked_util,
+    get_who_liked
+)
 
 register = Library()
 
@@ -49,7 +53,7 @@ def likes(user) -> QuerySet:
     Usage:
         {% likes request.user as var %}
     """
-    return Like.objects.filter(sender=user).distinct()
+    return Like.objects.filter(sender=user)
 
 
 @register.simple_tag

@@ -6,13 +6,13 @@ from .views import (
     IsLikedAPIView
 )
 
-app_name = 'like-api'
+app_name = 'likes-api'
 
 urlpatterns = [
     path('likes/', include([
-        path('', LikeListAPIView.as_view(), name='list-view'),
-        path('count/', UserCountOfLikesAPIView.as_view(), name='count-view'),
-        path('toggle/', LikeToggleView.as_view(), name='toggle-view'),
-        path('is/', IsLikedAPIView.as_view(), name='is-liked-view'),
+        path('list/', LikeListAPIView.as_view(), name='list'),
+        path('count/', UserCountOfLikesAPIView.as_view(), name='count'),
+        path('toggle/', LikeToggleView.as_view(), name='toggle'),
+        path('is/', IsLikedAPIView.as_view(), name='is'),
     ]))
 ]

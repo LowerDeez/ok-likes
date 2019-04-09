@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework import filters
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from .pagination import get_pagination_class
 from .serializers import LikeSerializer, LikeToggleSerializer, IsLikedSerializer
 from ..models import Like
-from ..utils import user_likes_count
+from likes.services import user_likes_count
 
 __all__ = (
     'LikeListAPIView',
@@ -25,6 +26,8 @@ class LikeListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, )
     serializer_class = LikeSerializer
     queryset = Like.objects.all()
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('content_type__model', )
 
     def get_queryset(self):
         return (
@@ -55,13 +58,12 @@ class LikeToggleView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
         data = serializer.data
         data['is_liked'] = bool(serializer.instance.pk)
         return Response(
-            data=data,
+            data,
             status=status.HTTP_201_CREATED,
-            headers=headers
+            headers=self.get_success_headers(serializer.data)
         )
 
 

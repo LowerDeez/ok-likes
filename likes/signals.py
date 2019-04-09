@@ -1,4 +1,5 @@
 from django.dispatch import Signal
+
 __all__ = (
     'object_liked',
     'object_unliked'
