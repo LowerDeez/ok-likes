@@ -1,4 +1,4 @@
 coverage:
 	coverage erase
-	coverage run --rcfile=.coveragerc setup.py test
+	coverage run -m django test --settings=likes.tests.settings
 	coverage report
