@@ -1,4 +1,4 @@
 coverage:
 	coverage erase
-	coverage run --source='.' manage.py test likes
+	coverage run -m django test --settings=likes.tests.settings
 	coverage report

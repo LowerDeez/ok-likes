@@ -69,3 +69,7 @@ USE_L10N = False
 USE_TZ = False
 
 LOGIN_REDIRECT_URL = '/admin/'
+
+LIKES_MODELS = {
+    "auth.User": {}
+}
