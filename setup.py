@@ -10,7 +10,7 @@ setup(
     name='django-ok-likes',
     version='0.3',
     description='Django likes app',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Oleg Kleschunov',
     author_email='igorkleschunov@gmail.com',
     url='https://github.com/LowerDeez/ok-likes',
