@@ -33,7 +33,7 @@ class BaseAPILikeTestCase(APITestCase):
 class LikeListAPIViewTestCase(BaseAPILikeTestCase):
     def setUp(self):
         super().setUp()
-        self.url = reverse('like-api:list-view')
+        self.url = reverse('likes-api:list')
 
     def test_list(self):
         self.client.login(username=self.username, password=self.password)
@@ -44,7 +44,7 @@ class LikeListAPIViewTestCase(BaseAPILikeTestCase):
 class UserCountOfLikesAPIViewTestCase(BaseAPILikeTestCase):
     def setUp(self):
         super().setUp()
-        self.url = reverse('like-api:count-view')
+        self.url = reverse('likes-api:count')
 
     def test_count(self):
         self.client.login(username=self.username, password=self.password)
@@ -55,7 +55,7 @@ class UserCountOfLikesAPIViewTestCase(BaseAPILikeTestCase):
 class LikeToggleViewTestCase(BaseAPILikeTestCase):
     def setUp(self):
         super().setUp()
-        self.url = reverse('like-api:toggle-view')
+        self.url = reverse('likes-api:toggle')
         self.valid_payload = {
             'id': self.test_user.pk,
             'content_type': self.content_type.pk,
@@ -68,7 +68,7 @@ class LikeToggleViewTestCase(BaseAPILikeTestCase):
 
         # test unlike
         with self.settings(LIKES_MODELS={'auth.User': {}}):
-            resp = self.client.post(
+            self.client.post(
                 self.url,
                 data=json.dumps(self.valid_payload),
                 content_type='application/json'
@@ -87,7 +87,7 @@ class LikeToggleViewTestCase(BaseAPILikeTestCase):
 class IsLikedAPIViewTestCase(BaseAPILikeTestCase):
     def setUp(self):
         super().setUp()
-        self.url = reverse('like-api:is-liked-view')
+        self.url = reverse('likes-api:is')
         self.valid_payload = {
             'ids': [self.test_user.pk],
             'content_type': self.content_type.pk,

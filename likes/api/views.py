@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework import filters
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -83,7 +83,7 @@ class UserCountOfLikesAPIView(APIView):
         )
 
 
-class IsLikedAPIView(APIView):
+class IsLikedAPIView(GenericAPIView):
     """
     post:
     API View to check is given elements are liked by authenticated user.\n
@@ -94,12 +94,10 @@ class IsLikedAPIView(APIView):
         }
     """
     permission_classes = (IsAuthenticated, )
+    serializer_class = IsLikedSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = IsLikedSerializer(
-            data=request.data,
-            context={'request': request}
-        )
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             return Response(serializer.data)
         return Response(

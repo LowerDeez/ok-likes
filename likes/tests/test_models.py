@@ -28,6 +28,7 @@ class LikeTestCase(TestCase):
     def test_like(self):
         like, liked = Like.like(self.user_1, self.content_type, self.user_2.pk)
         self.assertTrue(liked)
+        self.assertEqual(like.sender, self.user_1)
 
     def test_unlike(self):
         Like.like(self.user_1, self.content_type, self.user_2.pk)
