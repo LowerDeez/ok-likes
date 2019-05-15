@@ -1,4 +1,4 @@
 coverage:
 	coverage erase
-	coverage run --rcfile=.coveragerc --append runtests.py
+	coverage run --rcfile=.coveragerc setup.py test
 	coverage report
