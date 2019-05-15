@@ -1,0 +1,19 @@
+[run]
+source = likes
+branch = 1
+
+[report]
+omit = 
+    likes/migrations/*
+    likes/tests/*
+    likes/admin/*
+    .venv/*
+    env/*
+    setup.py
+include = likes/*
+ignore_errors = True
+exclude_lines =
+    if self.debug:
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:

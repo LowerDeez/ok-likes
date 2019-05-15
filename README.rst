@@ -261,7 +261,7 @@ A signal, which sents immediately after the object was unliked and provides the 
 .. |Build Status| image:: https://travis-ci.org/LowerDeez/ok-likes.svg?branch=master
    :target: https://travis-ci.org/LowerDeez/ok-likes
    :alt: Build status
-.. |Code Health| image:: https://api.codacy.com/project/badge/Grade/e5078569e40d428283d17efa0ebf9d19
+.. |Code Health| image:: https://api.codacy.com/project/badge/Grade/aa7e0f444c8d4520b0f0db5abc3a5960    
    :target: https://www.codacy.com/app/LowerDeez/ok-likes
    :alt: Code health
 .. |Python Versions| image:: https://img.shields.io/pypi/pyversions/django-ok-likes.svg

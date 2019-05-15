@@ -1,4 +1,5 @@
 include README.md
 include LICENSE
 include requirements.txt
-prune *.pyc
+recursive-include likes/locale *
+recursive-exclude * *.pyc
