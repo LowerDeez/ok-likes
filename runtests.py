@@ -10,7 +10,7 @@ from django.test.runner import DiscoverRunner
 def runtests(*test_args):
     # Setup settings
     if not settings.configured:
-        from likes.testsimport import settings as TEST_SETTINGS
+        from likes.tests import settings as TEST_SETTINGS
         settings.configure(**TEST_SETTINGS.__dict__)
 
     setup()
