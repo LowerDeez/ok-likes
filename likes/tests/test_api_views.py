@@ -23,7 +23,7 @@ class BaseAPILikeTestCase(APITestCase):
             email='john@doe.com'
         )
         self.test_user = User.objects.create(username='test')
-        Like.like(self.user, self.content_type, self.test_user.pk)
+        self.like = Like.like(self.user, self.content_type, self.test_user.pk)[0]
 
     def tearDown(self):
         self.user.delete()
@@ -100,4 +100,4 @@ class IsLikedAPIViewTestCase(BaseAPILikeTestCase):
             data=json.dumps(self.valid_payload),
             content_type='application/json'
         )
-        self.assertCountEqual(response.data.get('ids'), [self.test_user.pk])
+        self.assertCountEqual(response.data.get('ids'), [self.like.pk])
