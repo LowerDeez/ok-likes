@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpRequest
 
@@ -7,9 +8,9 @@ from likes.models import Like
 from likes.signals import object_liked, object_unliked
 
 if TYPE_CHECKING:
-    from django.contrib.auth import get_user_model
     from django.db.models import Model
-    User = get_user_model()
+
+User = get_user_model()
 
 __all__ = (
     'user_likes_count',
