@@ -71,7 +71,7 @@ class Like(models.Model):
             sender: User,
             content_type: ContentType,
             object_id: str
-    ) -> Tuple[object, bool]:
+    ) -> Tuple['Like', bool]:
         """
         Class method to like-dislike object
         """

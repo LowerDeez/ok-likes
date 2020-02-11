@@ -12,18 +12,28 @@ __all__ = (
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
-    list_filter = ("created_at", )
+    list_filter = (
+        "created_at",
+    )
     list_display = (
         "sender",
         "content_object_link",
         "created_at"
     )
-    list_select_related = ("sender", )
-    raw_id_fields = ('sender', )
-    readonly_fields = ('created_at', )
+    list_select_related = (
+        "sender",
+    )
+    raw_id_fields = (
+        'sender',
+    )
+    readonly_fields = (
+        'created_at',
+    )
     search_fields = (
         "sender__username",
-        "sender__email"
+        "sender__email",
+        "sender__first_name",
+        "sender__last_name"
     )
 
     def content_object_link(self, obj):

@@ -25,20 +25,24 @@ class LikedObjectRelatedField(serializers.RelatedField):
     """
 
     def to_representation(self, value):
-        serializers = {}
-        for key, val in LIKES_MODELS.items():
-            app_label, model_name = key.split('.')
-            serializer_path = val.get('serializer')
+        serializers_map = {}
+
+        for model_path, serializer_data in LIKES_MODELS.items():
+            app_label, model_name = model_path.split('.')
+            serializer_path = serializer_data.get('serializer')
+
             if all([app_label, model_name, serializer_path]):
-                serializers[
-                    apps.get_model(app_label, model_name)
-                ] = import_string(serializer_path)
-        for model in serializers.keys():
+                model_class = apps.get_model(app_label, model_name)
+                serializer_class = import_string(serializer_path)
+                serializers_map[model_class] = serializer_class
+
+        for model in serializers_map.keys():
             if isinstance(value, model):
-                return serializers[model](
+                return serializers_map[model](
                     instance=value,
                     context=self.context
                 ).data
+
         return str(value)
 
 
@@ -103,22 +107,22 @@ class IsLikedSerializer(serializers.Serializer):
     """
     Serializer to return liked objects
     """
-    ids = serializers.ListField(child=serializers.IntegerField())
+    ids = serializers.ListField(
+        child=serializers.IntegerField()
+    )
     content_type = serializers.PrimaryKeyRelatedField(
-        write_only=True, queryset=ContentType.objects.all())
+        write_only=True,
+        queryset=ContentType.objects.all()
+    )
 
     def validate(self, data):
-        liked_ids = []
-        for id_ in data['ids']:
-            is_liked = (
-                Like.objects
-                .filter(
-                    content_type=data['content_type'],
-                    object_id=id_,
-                    sender=self.context['request'].user
-                ).exists()
-            )
-            if is_liked:
-                liked_ids.append(id_)
+        liked_ids = list(
+            Like.objects
+            .filter(
+                content_type=data['content_type'],
+                object_id__in=data['ids'],
+                sender=self.context['request'].user
+            ).values_list('id', flat=True)
+        )
         data['ids'] = liked_ids
         return data

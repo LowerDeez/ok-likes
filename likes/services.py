@@ -1,9 +1,15 @@
-from django.contrib.auth import get_user_model
+from typing import TYPE_CHECKING
+
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpRequest
 
 from likes.models import Like
 from likes.signals import object_liked, object_unliked
+
+if TYPE_CHECKING:
+    from django.contrib.auth import get_user_model
+    from django.db.models import Model
+    User = get_user_model()
 
 __all__ = (
     'user_likes_count',
@@ -13,15 +19,14 @@ __all__ = (
     'send_signals'
 )
 
-User = get_user_model()
 
-
-def user_likes_count(user: User) -> int:
+def user_likes_count(user: 'User') -> int:
     """
     Returns count of likes for a given user.
     """
     if not user.is_authenticated:
         return 0
+
     return (
         Like.objects
         .filter(
@@ -33,7 +38,7 @@ def user_likes_count(user: User) -> int:
     )
 
 
-def obj_likes_count(obj) -> int:
+def obj_likes_count(obj: 'Model') -> int:
     """
     Returns count of likes for a given object.
     """
@@ -47,13 +52,15 @@ def obj_likes_count(obj) -> int:
     )
 
 
-def is_liked(obj, user: User) -> bool:
+def is_liked(obj, user: 'User') -> bool:
     """
     Checks if a given object is liked by a given user.
     """
     if not user.is_authenticated:
         return False
+
     ct = ContentType.objects.get_for_model(obj)
+
     return (
         Like.objects
         .filter(
@@ -65,11 +72,12 @@ def is_liked(obj, user: User) -> bool:
     )
 
 
-def get_who_liked(obj):
+def get_who_liked(obj: 'Model'):
     """
     Returns users, who liked a given object.
     """
     ct = ContentType.objects.get_for_model(obj)
+
     return (
         User.objects
         .filter(
@@ -82,7 +90,7 @@ def get_who_liked(obj):
 def send_signals(
         created: bool,
         request: HttpRequest,
-        like: Like,
+        like: 'Like',
         obj
 ):
     """
