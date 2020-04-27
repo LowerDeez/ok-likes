@@ -278,3 +278,7 @@ A signal, which sents immediately after the object was unliked and provides the 
    :alt: Code coverage
 
 .. _django-rest-framework: https://www.django-rest-framework.org/
+
+.. image:: https://api.codacy.com/project/badge/Grade/7904127e05d0476fb999f2ac6bbc8d28
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/app/LowerDeez/ok-likes?utm_source=github.com&utm_medium=referral&utm_content=LowerDeez/ok-likes&utm_campaign=Badge_Grade_Dashboard
