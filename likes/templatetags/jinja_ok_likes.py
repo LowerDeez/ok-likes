@@ -9,7 +9,7 @@ if apps.is_installed('django_jinja'):
 
     from ..models import Like
     from likes.services import (
-        obj_likes_count,
+        object_likes_count,
         is_liked,
         get_who_liked as who_liked
     )
@@ -29,7 +29,7 @@ if apps.is_installed('django_jinja'):
         Usage:
             {{ get_likes_count(object) }}
         """
-        return obj_likes_count(obj)
+        return object_likes_count(obj=obj)
 
 
     @library.global_function
@@ -40,7 +40,7 @@ if apps.is_installed('django_jinja'):
         Usage:
             {{ get_who_liked(object) }}
         """
-        return who_liked(obj)
+        return who_liked(obj=obj)
 
     @library.global_function
     def get_likes(user) -> QuerySet:
@@ -60,4 +60,4 @@ if apps.is_installed('django_jinja'):
         Usage:
             {{ get_is_liked(object, request.user) }}
         """
-        return is_liked(obj, user)
+        return is_liked(obj=obj, user=user)

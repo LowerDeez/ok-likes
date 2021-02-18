@@ -7,7 +7,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from ..models import Like
+from likes.models import Like
+from likes.services import toggle
 
 User = get_user_model()
 
@@ -23,7 +24,11 @@ class BaseAPILikeTestCase(APITestCase):
             email='john@doe.com'
         )
         self.test_user = User.objects.create(username='test')
-        self.like = Like.like(self.user, self.content_type, self.test_user.pk)[0]
+        self.like = toggle(
+            sender=self.user,
+            content_type=self.content_type,
+            object_id=self.test_user.pk
+        )[0]
 
     def tearDown(self):
         self.user.delete()

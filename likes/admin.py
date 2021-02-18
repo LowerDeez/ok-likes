@@ -12,17 +12,18 @@ __all__ = (
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
-    list_filter = (
-        "created_at",
-    )
     list_display = (
         "sender",
         "content_object_link",
         "created_at"
     )
+    list_filter = (
+        "created_at",
+    )
     list_select_related = (
         "sender",
     )
+    list_per_page = 25
     raw_id_fields = (
         'sender',
     )
@@ -33,7 +34,8 @@ class LikeAdmin(admin.ModelAdmin):
         "sender__username",
         "sender__email",
         "sender__first_name",
-        "sender__last_name"
+        "sender__last_name",
+        "content_type__model",
     )
 
     def content_object_link(self, obj):
@@ -44,5 +46,5 @@ class LikeAdmin(admin.ModelAdmin):
             )
         return '-'
     content_object_link.short_description = (
-        pgettext_lazy('like', 'Content object')
+        pgettext_lazy('ok:likes', 'Content object')
     )

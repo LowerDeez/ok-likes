@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -23,30 +21,28 @@ class Like(models.Model):
         object_id (CharField): primary key of a liked object
         content_object (GenericForeignKey): liked object
         created_at (DateTimeField): when object was created
-
-    Methods:
-        like (classmethod): implements 'toggle' functionality
     """
     sender = models.ForeignKey(
         User,
-        verbose_name=pgettext_lazy("like", "sender"),
+        on_delete=models.CASCADE,
         related_name="likes",
-        on_delete=models.CASCADE
+        verbose_name=pgettext_lazy("ok:likes", "Sender"),
     )
-
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
-        verbose_name=pgettext_lazy('like', 'Content type')
+        verbose_name=pgettext_lazy('ok:likes', 'Content type')
     )
     object_id = models.CharField(
-        pgettext_lazy('like', 'Object id'),
+        pgettext_lazy('ok:likes', 'Object id'),
         max_length=50
     )
-    content_object = GenericForeignKey('content_type', 'object_id')
-
+    content_object = GenericForeignKey(
+        'content_type',
+        'object_id'
+    )
     created_at = models.DateTimeField(
-        verbose_name=pgettext_lazy("like", 'Created at'),
+        pgettext_lazy("ok:likes", 'Created at'),
         auto_now_add=True
     )
 
@@ -59,27 +55,8 @@ class Like(models.Model):
                 "object_id"
             ),
         )
-        verbose_name = pgettext_lazy('like', 'Like')
-        verbose_name_plural = pgettext_lazy('like', 'Likes')
+        verbose_name = pgettext_lazy('ok:likes', 'Like')
+        verbose_name_plural = pgettext_lazy('ok:likes', 'Likes')
 
     def __str__(self) -> str:
         return f"{self.sender} - {self.content_object}"
-
-    @classmethod
-    def like(
-            cls,
-            sender: User,
-            content_type: ContentType,
-            object_id: str
-    ) -> Tuple['Like', bool]:
-        """
-        Class method to like-dislike object
-        """
-        obj, created = cls.objects.get_or_create(
-            sender=sender,
-            content_type=content_type,
-            object_id=object_id
-        )
-        if not created:
-            obj.delete()
-        return obj, created

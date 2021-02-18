@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -13,15 +13,37 @@ if TYPE_CHECKING:
 User = get_user_model()
 
 __all__ = (
+    'toggle',
     'user_likes_count',
-    'obj_likes_count',
+    'object_likes_count',
     'is_liked',
     'get_who_liked',
     'send_signals'
 )
 
 
-def user_likes_count(user: 'User') -> int:
+def toggle(
+        *,
+        sender: User,
+        content_type: ContentType,
+        object_id: str
+) -> Tuple['Like', bool]:
+    """
+    Class method to like-dislike object
+    """
+    obj, created = Like.objects.get_or_create(
+        sender=sender,
+        content_type=content_type,
+        object_id=object_id
+    )
+
+    if not created:
+        obj.delete()
+
+    return obj, created
+
+
+def user_likes_count(*, user: 'User') -> int:
     """
     Returns count of likes for a given user.
     """
@@ -39,7 +61,7 @@ def user_likes_count(user: 'User') -> int:
     )
 
 
-def obj_likes_count(obj: 'Model') -> int:
+def object_likes_count(*, obj: 'Model') -> int:
     """
     Returns count of likes for a given object.
     """
@@ -53,7 +75,7 @@ def obj_likes_count(obj: 'Model') -> int:
     )
 
 
-def is_liked(obj, user: 'User') -> bool:
+def is_liked(*, obj: 'Model', user: 'User') -> bool:
     """
     Checks if a given object is liked by a given user.
     """
@@ -73,7 +95,7 @@ def is_liked(obj, user: 'User') -> bool:
     )
 
 
-def get_who_liked(obj: 'Model'):
+def get_who_liked(*, obj: 'Model'):
     """
     Returns users, who liked a given object.
     """
@@ -89,6 +111,7 @@ def get_who_liked(obj: 'Model'):
 
 
 def send_signals(
+        *,
         created: bool,
         request: HttpRequest,
         like: 'Like',

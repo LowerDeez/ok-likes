@@ -27,7 +27,7 @@ class TemplateTagsTestCase(TestCase):
         self.assertEquals(likes_count(self.users[0]), 1)
 
     def test_is_liked(self):
-        self.assertEquals(is_liked(self.users[0], self.user), True)
+        self.assertEquals(is_liked(obj=self.users[0], user=self.user), True)
 
     def test_likes_all(self):
         qs = likes(self.user)

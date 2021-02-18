@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
 from ..models import Like
+from ..services import toggle
 
 User = get_user_model()
 
@@ -26,12 +27,24 @@ class LikeTestCase(TestCase):
         self.assertEquals(str(like), f"{self.user_1.__str__()} - {self.user_2.__str__()}")
 
     def test_like(self):
-        like, liked = Like.like(self.user_1, self.content_type, self.user_2.pk)
+        like, liked = toggle(
+            sender=self.user_1,
+            content_type=self.content_type,
+            object_id=self.user_2.pk
+        )
         self.assertTrue(liked)
         self.assertIsNotNone(like)
         self.assertEqual(like.sender, self.user_1)
 
     def test_unlike(self):
-        Like.like(self.user_1, self.content_type, self.user_2.pk)
-        like, liked = Like.like(self.user_1, self.content_type, self.user_2.pk)
+        toggle(
+            sender=self.user_1,
+            content_type=self.content_type,
+            object_id=self.user_2.pk
+        )
+        like, liked = toggle(
+            sender=self.user_1,
+            content_type=self.content_type,
+            object_id=self.user_2.pk
+        )
         self.assertFalse(liked)

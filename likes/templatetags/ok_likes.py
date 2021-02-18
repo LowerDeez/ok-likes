@@ -3,7 +3,7 @@ from django.template import Library
 
 from ..models import Like
 from likes.services import (
-    obj_likes_count,
+    object_likes_count,
     is_liked as is_liked_util,
     get_who_liked
 )
@@ -31,7 +31,7 @@ def likes_count(obj) -> int:
     or
         {{ obj|likes_count }}
     """
-    return obj_likes_count(obj)
+    return object_likes_count(obj=obj)
 
 
 @register.simple_tag
@@ -42,7 +42,7 @@ def who_liked(obj) -> QuerySet:
     Usage:
         {% who_liked object as fans %}
     """
-    return get_who_liked(obj)
+    return get_who_liked(obj=obj)
 
 
 @register.simple_tag
@@ -64,4 +64,4 @@ def is_liked(obj, user) -> bool:
     Usage:
         {% is_liked object request.user as var %}
     """
-    return is_liked_util(obj, user)
+    return is_liked_util(obj=obj, user=user)
