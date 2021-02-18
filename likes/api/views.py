@@ -52,8 +52,7 @@ class IsLikedAPIView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        return Response(serializer.data)
+        return Response(serializer.validated_data)
 
 
 class LikeListAPIView(ListAPIView):

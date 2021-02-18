@@ -87,7 +87,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
             created=created,
             request=self.context['request'],
             like=like,
-            obj=validated_data['object']
+            obj=validated_data['instance']
         )
 
         return like
