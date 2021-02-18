@@ -45,8 +45,8 @@ class LikeToggleSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        content_type = data.pop('type')
         object_id = data.pop('id')
+        content_type = data.pop('type')
 
         if not allowed_content_type(content_type):
             raise serializers.ValidationError({
@@ -82,6 +82,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
             content_type=ContentType.objects.get_for_model(instance),
             object_id=instance.pk
         )
+        self.is_liked = not created
 
         send_signals(
             created=created,

@@ -42,7 +42,7 @@ class IsLikedAPIView(GenericAPIView):
     API View to check is given elements are liked by authenticated user.\n
     Possible payload:\n
         {
-            "type": "app_label.model",  // object's content type natural key joined string
+            "type": "app_label.model",  // object's content type's natural key joined string
             "ids": [1,2,3]  // list of objects primary keys
         }
     """
@@ -86,7 +86,7 @@ class LikeToggleView(CreateAPIView):
     API View to like-unlike given object by authenticated user.\n
     Possible payload:\n
         {
-            "type": "app_label.model",  // object's content type natural key joined string
+            "type": "app_label.model",  // object's content type's natural key joined string
             "id": 1  // object's primary key
         }
     """
@@ -98,9 +98,10 @@ class LikeToggleView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         data = serializer.data
-        data['is_liked'] = bool(serializer.instance.pk)
+        data['is_liked'] = getattr(serializer, 'is_liked', True)
+        headers = self.get_success_headers(serializer.data)
         return Response(
             data,
             status=status.HTTP_201_CREATED,
-            headers=self.get_success_headers(serializer.data)
+            headers=headers
         )
