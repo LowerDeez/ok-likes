@@ -103,7 +103,7 @@ Base endpoints
     .. code:: json
 
         {
-            "content_type": 1,
+            "type": 'app_label.model',  # '.'.join(object_ct.natural_key())
             "ids": [1,2,3]
         }
     
@@ -124,7 +124,7 @@ Base endpoints
     .. code:: json
 
         {
-            "content_type": 1,
+            "type": 'app_label.model',  # '.'.join(object_ct.natural_key())
             "id": 1
         }
     
