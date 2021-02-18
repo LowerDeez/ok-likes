@@ -99,9 +99,8 @@ class LikeToggleView(CreateAPIView):
         self.perform_create(serializer)
         data = serializer.data
         data['is_liked'] = getattr(serializer, 'is_liked', True)
-        headers = self.get_success_headers(serializer.data)
         return Response(
             data,
             status=status.HTTP_201_CREATED,
-            headers=headers
+            headers=self.get_success_headers(serializer.data)
         )

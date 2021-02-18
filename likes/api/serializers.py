@@ -82,7 +82,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
             content_type=ContentType.objects.get_for_model(instance),
             object_id=instance.pk
         )
-        self.is_liked = not created
+        self.is_liked = created
 
         send_signals(
             created=created,
