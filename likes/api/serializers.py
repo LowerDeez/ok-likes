@@ -118,7 +118,8 @@ class IsLikedSerializer(serializers.Serializer):
                     content_type=data.pop('type', None),
                     object_id__in=data.pop('ids', []),
                     sender=user
-                ).values_list('object_id', flat=True)
+                )
+                .values_list('object_id', flat=True)
             )
 
         data['ids'] = list(ids)
