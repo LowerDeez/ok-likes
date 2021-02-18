@@ -63,7 +63,7 @@ class LikeToggleViewTestCase(BaseAPILikeTestCase):
         self.url = reverse('likes-api:toggle')
         self.valid_payload = {
             'id': self.test_user.pk,
-            'content_type': self.content_type.pk,
+            'type': '.'.join(self.content_type.natural_key()),
         }
 
     def test_toggle(self):
@@ -95,7 +95,7 @@ class IsLikedAPIViewTestCase(BaseAPILikeTestCase):
         self.url = reverse('likes-api:is')
         self.valid_payload = {
             'ids': [self.test_user.pk],
-            'content_type': self.content_type.pk,
+            'type': '.'.join(self.content_type.natural_key()),
         }
 
     def test_is_liked(self):
