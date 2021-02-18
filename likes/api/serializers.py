@@ -34,7 +34,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
     """
     Serializer to like element
     """
-    id = serializers.IntegerField(write_only=True)
+    id = serializers.CharField(write_only=True)
     type = ContentTypeNaturalKeyField(write_only=True)
 
     class Meta:

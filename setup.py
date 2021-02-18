@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='django-ok-likes',
-    version='0.6.3',
+    version='0.6.4',
     description='Django likes app',
     long_description=open('README.rst').read(),
     author='Oleg Kleschunov',
