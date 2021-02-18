@@ -105,4 +105,4 @@ class IsLikedAPIViewTestCase(BaseAPILikeTestCase):
             data=json.dumps(self.valid_payload),
             content_type='application/json'
         )
-        self.assertCountEqual(response.data.get('ids'), [self.like.content_object.pk])
+        self.assertCountEqual(response.data.get('ids'), [str(self.like.content_object.pk)])
