@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import pgettext_lazy
 
@@ -34,7 +35,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
     Serializer to like element
     """
     id = serializers.IntegerField(write_only=True)
-    type = ContentTypeNaturalKeyField()
+    type = ContentTypeNaturalKeyField(write_only=True)
 
     class Meta:
         model = Like
@@ -44,7 +45,8 @@ class LikeToggleSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        content_type = data['type']
+        content_type = data.pop('type')
+        object_id = data.pop('id')
 
         if not allowed_content_type(content_type):
             raise serializers.ValidationError({
@@ -57,7 +59,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
         try:
             obj = (
                 content_type.get_object_for_this_type(
-                    pk=data['id']
+                    pk=object_id
                 )
             )
         except ObjectDoesNotExist:
@@ -68,15 +70,17 @@ class LikeToggleSerializer(serializers.ModelSerializer):
                 )
             })
         else:
-            data['object'] = obj
+            data['instance'] = obj
 
         return data
 
     def create(self, validated_data):
+        instance = validated_data['instance']
+
         like, created = toggle(
             sender=self.context['request'].user,
-            content_type=validated_data['type'],
-            object_id=validated_data['object'].pk
+            content_type=ContentType.objects.get_for_model(instance),
+            object_id=instance.pk
         )
 
         send_signals(
@@ -94,9 +98,12 @@ class IsLikedSerializer(serializers.Serializer):
     Serializer to return liked objects
     """
     ids = serializers.ListField(
-        child=serializers.CharField()
+        child=serializers.CharField(),
+        write_only=True
     )
-    type = ContentTypeNaturalKeyField()
+    type = ContentTypeNaturalKeyField(
+        write_only=True
+    )
 
     def validate(self, data):
         user = self.context['request'].user
@@ -107,8 +114,8 @@ class IsLikedSerializer(serializers.Serializer):
             ids = (
                 Like.objects
                 .filter(
-                    content_type=data['type'],
-                    object_id__in=data['ids'],
+                    content_type=data.pop('type', None),
+                    object_id__in=data.pop('ids', []),
                     sender=user
                 ).values_list('id', flat=True)
             )
