@@ -86,7 +86,7 @@ Base endpoints
 
         LIKE_MODELS = {
             "article.Article": {
-                'serializer': 'article.api.serializers.ArticleSerializer'
+                "serializer": "article.api.serializers.ArticleSerializer"
             },
         }
 
@@ -101,7 +101,7 @@ Base endpoints
     .. code:: json
 
         {
-            "type": 'app_label.model',
+            "type": "app_label.model",
 
         }
 
@@ -113,7 +113,7 @@ Base endpoints
     .. code:: json
 
         {
-            "type": 'app_label.model',
+            "type": "app_label.model",
         }
     
 
@@ -133,7 +133,7 @@ Base endpoints
     .. code:: json
 
         {
-            "type": 'app_label.model',
+            "type": "app_label.model",
             "id": 1
         }
     
