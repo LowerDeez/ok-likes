@@ -9,9 +9,12 @@ if apps.is_installed('django_jinja'):
 
     from ..models import Like
     from likes.services import (
-        object_likes_count,
-        is_liked,
-        get_who_liked as who_liked
+        get_object_likes_count,
+        is_object_liked_by_user
+    )
+    from ..selectors import (
+        get_users_who_liked_object as who_liked,
+        get_user_likes
     )
 
     __all__ = (
@@ -29,7 +32,7 @@ if apps.is_installed('django_jinja'):
         Usage:
             {{ get_likes_count(object) }}
         """
-        return object_likes_count(obj=obj)
+        return get_object_likes_count(obj=obj)
 
 
     @library.global_function
@@ -50,7 +53,7 @@ if apps.is_installed('django_jinja'):
         Usage:
             {{ get_likes(request.user) }}
         """
-        return Like.objects.filter(sender=user)
+        return get_user_likes(user=user)
 
     @library.global_function
     def get_is_liked(obj, user) -> bool:
@@ -60,4 +63,4 @@ if apps.is_installed('django_jinja'):
         Usage:
             {{ get_is_liked(object, request.user) }}
         """
-        return is_liked(obj=obj, user=user)
+        return is_object_liked_by_user(obj=obj, user=user)

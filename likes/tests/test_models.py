@@ -28,7 +28,7 @@ class LikeTestCase(TestCase):
 
     def test_like(self):
         like, liked = toggle(
-            sender=self.user_1,
+            user=self.user_1,
             content_type=self.content_type,
             object_id=self.user_2.pk
         )
@@ -38,12 +38,12 @@ class LikeTestCase(TestCase):
 
     def test_unlike(self):
         toggle(
-            sender=self.user_1,
+            user=self.user_1,
             content_type=self.content_type,
             object_id=self.user_2.pk
         )
         like, liked = toggle(
-            sender=self.user_1,
+            user=self.user_1,
             content_type=self.content_type,
             object_id=self.user_2.pk
         )

@@ -25,7 +25,7 @@ class BaseAPILikeTestCase(APITestCase):
         )
         self.test_user = User.objects.create(username='test')
         self.like = toggle(
-            sender=self.user,
+            user=self.user,
             content_type=self.content_type,
             object_id=self.test_user.pk
         )[0]
@@ -94,15 +94,13 @@ class IsLikedAPIViewTestCase(BaseAPILikeTestCase):
         super().setUp()
         self.url = reverse('likes-api:is')
         self.valid_payload = {
-            'ids': [self.test_user.pk],
             'type': '.'.join(self.content_type.natural_key()),
         }
 
     def test_is_liked(self):
         self.client.login(username=self.username, password=self.password)
-        response = self.client.post(
+        response = self.client.get(
             self.url,
-            data=json.dumps(self.valid_payload),
-            content_type='application/json'
+            data=self.valid_payload,
         )
         self.assertCountEqual(response.data.get('ids'), [str(self.like.content_object.pk)])

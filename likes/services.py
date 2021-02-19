@@ -6,6 +6,7 @@ from django.http import HttpRequest
 
 from likes.models import Like
 from likes.signals import object_liked, object_unliked
+from likes.selectors import get_user_likes
 
 if TYPE_CHECKING:
     from django.db.models import Model
@@ -14,25 +15,24 @@ User = get_user_model()
 
 __all__ = (
     'toggle',
-    'user_likes_count',
-    'object_likes_count',
-    'is_liked',
-    'get_who_liked',
+    'get_user_likes_count',
+    'get_object_likes_count',
+    'is_object_liked_by_user',
     'send_signals'
 )
 
 
 def toggle(
         *,
-        sender: User,
-        content_type: ContentType,
+        user: 'User',
+        content_type: 'ContentType',
         object_id: str
 ) -> Tuple['Like', bool]:
     """
     Class method to like-dislike object
     """
     obj, created = Like.objects.get_or_create(
-        sender=sender,
+        sender=user,
         content_type=content_type,
         object_id=object_id
     )
@@ -43,7 +43,11 @@ def toggle(
     return obj, created
 
 
-def user_likes_count(*, user: 'User') -> int:
+def get_user_likes_count(
+        *,
+        user: 'User',
+        content_type: 'ContentType' = None
+) -> int:
     """
     Returns count of likes for a given user.
     """
@@ -51,62 +55,51 @@ def user_likes_count(*, user: 'User') -> int:
         return 0
 
     return (
-        Like.objects
-        .filter(
-            sender=user,
-            content_type__isnull=False,
-            object_id__isnull=False
+        get_user_likes(
+            user=user,
+            content_type=content_type
         )
         .count()
     )
 
 
-def object_likes_count(*, obj: 'Model') -> int:
+def get_object_likes_count(*, obj: 'Model') -> int:
     """
     Returns count of likes for a given object.
     """
     return (
         Like.objects
         .filter(
-            content_type=ContentType.objects.get_for_model(obj),
+            content_type=(
+                ContentType.objects.get_for_model(obj)
+            ),
             object_id=obj.pk
         )
         .count()
     )
 
 
-def is_liked(*, obj: 'Model', user: 'User') -> bool:
+def is_object_liked_by_user(
+        *,
+        obj: 'Model',
+        user: 'User'
+) -> bool:
     """
     Checks if a given object is liked by a given user.
     """
     if not user.is_authenticated:
         return False
 
-    ct = ContentType.objects.get_for_model(obj)
-
     return (
         Like.objects
         .filter(
-            content_type=ct,
+            content_type=(
+                ContentType.objects.get_for_model(obj)
+            ),
             object_id=obj.pk,
             sender=user
         )
         .exists()
-    )
-
-
-def get_who_liked(*, obj: 'Model'):
-    """
-    Returns users, who liked a given object.
-    """
-    ct = ContentType.objects.get_for_model(obj)
-
-    return (
-        User.objects
-        .filter(
-            likes__content_type=ct,
-            likes__object_id=obj.pk
-        )
     )
 
 

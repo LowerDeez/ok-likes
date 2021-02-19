@@ -15,7 +15,7 @@ from likes.services import toggle, send_signals
 __all__ = (
     'LikeListSerializer',
     'LikeToggleSerializer',
-    'IsLikedSerializer'
+    'LikeContentTypeSerializer'
 )
 
 
@@ -78,7 +78,7 @@ class LikeToggleSerializer(serializers.ModelSerializer):
         instance = validated_data['instance']
 
         like, created = toggle(
-            sender=self.context['request'].user,
+            user=self.context['request'].user,
             content_type=ContentType.objects.get_for_model(instance),
             object_id=instance.pk
         )
@@ -94,34 +94,11 @@ class LikeToggleSerializer(serializers.ModelSerializer):
         return like
 
 
-class IsLikedSerializer(serializers.Serializer):
+class LikeContentTypeSerializer(serializers.Serializer):
     """
     Serializer to return liked objects
     """
-    ids = serializers.ListField(
-        child=serializers.CharField(),
-        write_only=True
-    )
     type = ContentTypeNaturalKeyField(
+        required=False,
         write_only=True
     )
-
-    def validate(self, data):
-        user = self.context['request'].user
-
-        if not user.is_authenticated:
-            ids = []
-        else:
-            ids = (
-                Like.objects
-                .filter(
-                    content_type=data.pop('type', None),
-                    object_id__in=data.pop('ids', []),
-                    sender=user
-                )
-                .values_list('object_id', flat=True)
-            )
-
-        data['ids'] = list(ids)
-
-        return data
