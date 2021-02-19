@@ -96,15 +96,24 @@ Base endpoints
 
 2. ``/api/v1/likes/count/`` - API View to return count of likes for authenticated user.
 
-3. ``/api/v1/likes/is/`` - API View to check is given elements are liked by authenticated user. As result, you will get a list of ``ids``.  
-
-    Possible payload:
+    Possible GET parameters:
 
     .. code:: json
 
         {
             "type": 'app_label.model',  # '.'.join(object_ct.natural_key())
-            "ids": [1,2,3]
+
+        }
+
+
+3. ``/api/v1/likes/is/`` - API View to return list of objects ids, which are liked by authenticated user. As result, you will get a list of ``ids``.  
+
+    Possible GET parameters:
+
+    .. code:: json
+
+        {
+            "type": 'app_label.model',  # '.'.join(object_ct.natural_key())
         }
     
 
@@ -113,7 +122,7 @@ Base endpoints
     .. code:: json
 
         {
-            "ids": [1,3]
+            "ids": [1, 2, 3]
         }
     
 
